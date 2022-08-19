@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600&display=swap');
+
+body{
+
+  background-color: #f5f5f5;
+  padding: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+#energyChart{
+  width: 100%;
+  height: auto;
+}
+
+.header{
+
+  /* background-color: #606469; */
+  background-color: rgb(58, 112, 237);
+  height: 4rem;
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
+  margin: -1rem -1rem 1.5rem -1rem;
+  width: auto;
+}
+
+.header h2{
+
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin: auto;
+  padding: .5rem;
+}
+
+.bodyMonitor .rowBodyMonitor {
+
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.bodyMonitor .rowBodyMonitor_graph {
+
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 99%;
+  /* height: 42rem; */
+}
+
+.bodyMonitor .rowBodyMonitor .cardHeader h4,
+.bodyMonitor .rowBodyMonitor_graph .cardHeader h4{
+
+  margin: .5rem 0 0 0;
+}
+
+.bodyMonitor .rowBodyMonitor .card,
+.bodyMonitor .rowBodyMonitor_graph .card,
+.bodyMonitor .rowBodyMonitor_graph .card_graph {
+
+  background-color: #fff;
+  border-radius: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  /* height: 8rem; */
+  height: auto;
+  border: 1px solid #e7e7e7;
+  padding: 0.5rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bodyMonitor .rowBodyMonitor_graph .card_graph{
+
+  height: auto;
+  width: 80%;
+}
+
+.bodyMonitor .rowBodyMonitor .card hr,
+.bodyMonitor .rowBodyMonitor_graph .card hr,
+.bodyMonitor .rowBodyMonitor_graph .card_graph hr {
+
+  border: 1px solid #e7e7e7;
+  width: 100%;
+}
+
+.bodyMonitor .rowBodyMonitor_graph .infoGroup{
+  
+  width: 20%;
+}
+
+.formGroup{
+  margin: 1rem 0;
+  position: relative;
+  --color: #5757577e;
+}
+
+select{
+  width: 95%;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #706c6c;
+  padding: .6em .3em;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid var(--color);
+  background-color: #fff;
+}
+
+input{
+  width: 95%;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #706c6c;
+  padding: .6em .3em;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid var(--color);
+}
+
+label{
+  color: var(--color);
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 5px;
+  transform: translateY(10px);
+  transition: transform .5s, color .3s; 
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label,
+select:focus + label,
+select:not(:placeholder-shown) + label{
+  transform: translateY(-12px) scale(.7);
+  transform-origin: top left;
+  color: #3866f2;
+}
