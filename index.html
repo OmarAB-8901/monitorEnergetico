@@ -18,6 +18,43 @@
 
   <div class="bodyMonitor">
 
+    <!-- <div class="rowBodyMonitor">
+      <div class="card">
+        <div class="cardHeader"><h4>Fecha</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Turno</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Inicio de turno</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Fin de turno</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Area</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Equipo</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader"><h4>Instrumentos</h4></div><hr>
+        <div class="cardBody"></div>
+      </div>
+    </div> -->
+
     <!-- Nuevo Diseño -->
     <div class="rowBodyMonitor_graph">
 
@@ -32,6 +69,7 @@
       </div>
 
       <div class="infoGroup">
+
         <div class="card">
           <div class="cardHeader">
             <h4>Caja de herramientas</h4>
@@ -40,31 +78,68 @@
           <div class="cardBody">
 
             <div class="formGroup">
-              <select type="text" name="" id="graphSelector" class="selectGraph"></select>  
-              <label for="dateSelectot" class="">Este es el label del input</label>
+              <select type="text" name="" id="graphSelector" class="selectGraph"></select>
+              <label for="dateSelectot" class="">Selector de graficas</label>
             </div>
 
-            <div class="formGroup">
-              <input type="text" name="" id="dateSelector" placeholder=" " class="inputGraph">
+            <!-- <div class="formGroup">
+              <input type="date" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
               <label for="dateSelectot" class="lblGraph">Seleccione fecha</label>
-            </div>
+            </div> -->
+
+            <!-- <div class="formGroup">
+              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <label for="dateSelectot" class="lblGraph">Seleccione hora</label>
+            </div> -->
 
             <!-- <div class="formGroup">
               <input type="text" name="" id="dateSelector" placeholder=" " class="inputGraph">
               <label for="dateSelectot" class="lblGraph">Este es el label del input</label>
             </div> -->
+
+            <!-- Actions Buttons -->
+            <!-- <div class="formGroup btnActions">
+              <button class="btnPrimary" id="btnBuscar"> Buscar </button>
+              <button class="btnSecondary" id="btnLimpiar"> Limpiar </button>
+            </div> -->
+
           </div>
         </div>
 
-        <!-- <div class="card">
+        <div class="card totalsCard">
           <div class="cardHeader">
-            <h4>Este es el encabezado</h4>
+            <h4>Total de consumo</h4>
           </div>
           <hr>
-          <div class="cardBody"></div>
+          <div class="cardBody">
+            <p class="kwh_Value">0.0</p>
+            <p class="kwh">KWh</p>
+          </div>
         </div>
 
-        <div class="card">
+        <!-- Aqui esta la tabla sugerida para mostrar información -->
+        <div class="card tblDesglose">
+          <div class="cardHeader">
+            <h4>Desglose</h4>
+          </div>
+          <hr>
+          <div class="cardBody">
+            <table id="tablaDesglose">
+              <thead>
+                <tr>
+                  <th>Hora</th>
+                  <th>KWh</th>
+                </tr>
+              </thead>
+              <tbody class="tblDesgloseBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- END -->
+
+        <!--<div class="card">
           <div class="cardHeader">
             <h4>Este es el encabezado</h4>
           </div>
