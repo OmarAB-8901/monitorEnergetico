@@ -38,7 +38,7 @@ let randomValues = () => {
 
   for (let i = 1; i <= 60; i++) {
     // random = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
-    random = i + Math.floor(Math.random() * (3 - 1 + 1)) + 1;
+    random = i + Math.floor(Math.random() * (4 - 1 + 1)) + 1;
     // random =  i + Math.floor(Math.random() * (i - 1 + 1)) + 1;
     // random = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
     values.push(random);
@@ -101,13 +101,21 @@ function printChart() {
 typeGraph("Consumo", "Voltaje", "Corriente");
 printChart();
 
+/** 
+ * javascript comment 
+ * @Author: Carlos Omar Anaya Barajas 
+ * @Date: 2022-08-22 14:16:08 
+ * @Desc: Temporal to add data to the table 
+ */
 let rows = "";
 for(let i=1; i<=10; i++){
 
-  rows += "<tr><td>"+ i +"</td><td>"+ Math.floor(Math.random() * (7 - 1 + 1)) + 1 +"</td></tr>";
+  rows += "<tr><td>"+ i +"</td><td>"+ Math.floor(Math.random() * (10 - 1 + 1)) + 1 +"</td></tr>";
 }
 
 document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
+document.getElementsByClassName('kwh_Value')[0].innerHTML = (Math.floor(Math.random() * (100- 1 + 1)) + 1).toFixed(2);
+// END
 
 let graphSelector = document.getElementById('graphSelector');
 graphSelector.addEventListener('change', function (e) {
