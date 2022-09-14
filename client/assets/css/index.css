@@ -21,7 +21,7 @@ body {
   background-color: rgb(58, 112, 237);
   height: 4rem;
   /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
-  margin: -1rem -1rem 1.5rem -1rem;
+  margin: -1rem -1rem 1rem -1rem;
   width: auto;
 }
 
@@ -137,6 +137,30 @@ body {
   display: flex;
   gap: 0.5em;
   justify-content: center;
+}
+
+/* .errorDates{
+
+  color: red;
+  font: monospace;
+} */
+
+span.errorDates{
+
+  display: none;
+}
+
+span.errorDates.show{
+  color: red;
+  display: inline;
+}
+
+@keyframes typing{
+  from { width: 0; }
+}
+
+@keyframes blink{
+  50% { border-color: transparent; }
 }
 
 .kwh {

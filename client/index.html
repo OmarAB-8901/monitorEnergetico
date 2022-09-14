@@ -8,6 +8,7 @@
   <title>Monitor de monitoreo</title>
 
   <link rel="stylesheet" href="./assets/css/index.css">
+  <!-- <link rel="stylesheet" href="./assets/css/datatables.min.css"> -->
 </head>
 
 <body>
@@ -18,25 +19,25 @@
 
   <div class="bodyMonitor">
 
-    <div class="rowBodyMonitor" style="text-align: center;">
-      <div class="card">
+    <div class="rowBodyMonitor" style="text-align: center; /*gap: 0.5rem;*/ /*width: 78.5%;*/">
+      <!-- <div class="card">
         <div class="cardHeader"><h4>Fecha</h4></div><hr>
+        <div class="cardBody"><p>22/08/2022</p></div>
+      </div> -->
+
+      <!-- <div class="card">
+        <div class="cardHeader"><h4>Turno</h4></div><hr>
+        <div class="cardBody"><p>Matutino</p></div>
+      </div> -->
+
+      <div class="card">
+        <div class="cardHeader"><h4>Fecha inicio</h4></div><hr>
         <div class="cardBody"><p>22/08/2022</p></div>
       </div>
 
       <div class="card">
-        <div class="cardHeader"><h4>Turno</h4></div><hr>
-        <div class="cardBody"><p>Matutino</p></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Inicio de turno</h4></div><hr>
-        <div class="cardBody"><p>22/08/2022 08:30:00</p></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Fin de turno</h4></div><hr>
-        <div class="cardBody"><p>22/08/2022 18:30:59</p></div>
+        <div class="cardHeader"><h4>Fecha fin</h4></div><hr>
+        <div class="cardBody"><p>22/08/2022</p></div>
       </div>
 
       <div class="card">
@@ -82,8 +83,21 @@
               <label for="dateSelectot" class="">Selector de graficas</label>
             </div>
 
+            <div class="formGroup" style="gap: 1rem;">
+              <input type="date" name="" id="dataInitial" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <p style="margin: 1rem 0 0 0;">-</p>
+              <input type="date" name="" id="dateEnding" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <label for="dateSelectot" class="lblGraph">Seleccione rango de fechas</label>
+            </div>
+
+            <div>
+              <span class="errorDates"> <small> Error: las fechas se encuentran invertidas </small> </span>
+            </div>
+
             <!-- <div class="formGroup">
               <input type="date" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
+              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
               <label for="dateSelectot" class="lblGraph">Seleccione fecha</label>
             </div> -->
 
@@ -99,10 +113,10 @@
             </div> -->
 
             <!-- Actions Buttons -->
-            <!-- <div class="formGroup btnActions">
+            <div class="formGroup btnActions">
               <button class="btnPrimary" id="btnBuscar"> Buscar </button>
-              <button class="btnSecondary" id="btnLimpiar"> Limpiar </button>
-            </div> -->
+              <!-- <button class="btnSecondary" id="btnLimpiar"> Limpiar </button> -->
+            </div>
 
           </div>
         </div>
@@ -119,7 +133,7 @@
         </div>
 
         <!-- Aqui esta la tabla sugerida para mostrar información -->
-        <div class="card tblDesglose">
+        <!-- <div class="card tblDesglose">
           <div class="cardHeader">
             <h4>Desglose</h4>
           </div>
@@ -136,7 +150,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </div> -->
         <!-- END -->
 
         <!--<div class="card">
@@ -210,11 +224,38 @@
       </div>
 
     </div> -->
+
+    <div class="rowBodyMonitor">
+
+      <div class="card tblDesglose">
+        <div class="cardHeader">
+          <h4>Desglose información</h4>
+        </div>
+        <hr>
+        <div class="cardBody">
+          <table id="tablaDesglose">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>KWh</th>
+              </tr>
+            </thead>
+            <tbody class="tblDesgloseBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- <input type="color"> -->
   <!-- <progress min="0" max="100" value="5" id=""></progress> -->
 
+  <!-- <script src="./assets/js/jquery361.min.js"></script> -->
+  <!-- <script src="./assets/js/datatables.min.js"></script> -->
+  
+  <script src="./assets/js/moment.js"></script>
   <script src="./assets/js/chart.min.js"></script>
   <script src="./assets/js/index.js"></script>
 
