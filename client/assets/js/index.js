@@ -1,4 +1,9 @@
+let urlApi = "http://localhost:1880";
 let myChart;
+// let _today = moment().date() + "/" + ( moment().month() < 10 ? "0" + moment().month() : moment().month() ) + "/" + moment().year();
+let _today = moment().year() + "-" + ( moment().month() < 10 ? "0" + (moment().month()+1) : moment().month()+1 ) + "-" + moment().date();
+
+document.getElementById('dateInitial').value = _today;
 
 /** 
  * javascript comment 
@@ -19,25 +24,59 @@ let randomValues = () => {
   return values;
 }
 
-// let graphSelector = document.getElementById('graphSelector');
-// graphSelector.addEventListener('change', function (e) {
+/** 
+ * javascript comment 
+ * @Author: Carlos Omar Anaya Barajas 
+ * @Date: 2022-09-19 11:22:18 
+ * @Desc: Obtain info from the database 
+ */
+
+let dataObtained = async () => {
+
+  let date = document.getElementById('dateInitial').value;
+  let typeGraph = document.getElementById('graphSelector').value;
+
+  let dataReceived = await fetch(urlApi + '/obtainDataChart?date='+date+"&typeGraph="+typeGraph).then(json => json.json()).then(data => data);
+
+  let dataToReturn = dataReceived.map(data => {
   
-//   myChart.destroy();
-//   printChart();
-// });
+    return { dateFormated: moment(data.DateAndTime).minute(), value: data.Val }
+  });
 
-let showTableData = () => {
+  return timeToShow().map(minute => {
 
-   let rows = "";
-   for(let i=0; i<=23; i++){
- 
-     rows += "<tr><td>"+ i +"</td><td>"+ Math.floor(Math.random() * (10 - 1 + 1)) + 1 +"</td></tr>";
-   }
- 
-   document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
-   document.getElementsByClassName('kwh_Value')[0].innerHTML = (Math.floor(Math.random() * (100- 1 + 1)) + 1).toFixed(2);
+    let temp = dataToReturn.filter(data => {
 
-  //  let tableCreated = document.querySelector('#tablaDesglose').DataTable();
+      if (data.dateFormated == minute)
+        return data;
+    });
+
+    return temp.length > 0 ? temp[0].value : 0;
+  });
+}
+
+let showTableData = (dataToShow) => {
+
+  let totKwh = 0;
+  let rows = "";
+
+  // let time = 0;
+  // dataToShow = dataToShow.map( data => { return { timeLabel: time++, value: data } }).filter( data => data.value != 0 ? data : 0 );
+
+  // for (let i = 1; i <= dataToShow.length; i++) {
+  //   rows += "<tr><td>" + dataToShow[i - 1].timeLabel + "</td><td>" + dataToShow[i - 1].value + "</td></tr>";
+  //   totKwh += dataToShow[i - 1].value;
+  // }
+
+  for (let i = 1; i <= dataToShow.length; i++) {
+    rows += "<tr><td>" + i + "</td><td>" + dataToShow[i - 1] + "</td></tr>";
+    totKwh += dataToShow[i - 1];
+  }
+
+  document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
+  document.getElementsByClassName('kwh_Value')[0].innerHTML = totKwh.toFixed(2);
+
+  // let tableCreated = document.querySelector('#tablaDesglose').DataTable();
   // $('#tablaDesglose').DataTable({
   //   dom: 'Blfrtip',
   //   // "paging": true,
@@ -74,11 +113,11 @@ let compareDates = () => {
 
   let dateInitial = document.getElementById('dataInitial').value;
   dateInitial = moment(dateInitial);
-  
+
   let dateEnding = document.getElementById('dateEnding').value;
   dateEnding = moment(dateEnding);
 
-  let diffdates = dateEnding.diff( dateInitial );
+  let diffdates = dateEnding.diff(dateInitial);
 
   return diffdates < 0 ? false : true;
 };
@@ -93,10 +132,10 @@ let showErrorDates = () => {
   }, 7000);
 }
 
-document.getElementById('btnBuscar').addEventListener('click', function(){
+document.getElementById('btnBuscar').addEventListener('click', function () {
 
-  if(!compareDates()){
-    
+  if (!compareDates()) {
+
     showErrorDates();
     return;
   }
@@ -105,10 +144,12 @@ document.getElementById('btnBuscar').addEventListener('click', function(){
   printChart();
 });
 
-function printChart() {
+async function printChart() {
+
+  let dataToShow = await dataObtained();
 
   let typeChart = 'line';
-  let nameChart = 'KWh / segundo';
+  let nameChart = 'KWh / minuto';
   let smooth = true;
   let isFilled = false;
   const ctx = document.getElementById('energyChart').getContext('2d');
@@ -116,15 +157,15 @@ function printChart() {
   myChart = new Chart(ctx, {
     type: typeChart,
     data: {
-      labels: getSeconds(),
+      labels: timeToShow(),
       datasets: [{
-          label: nameChart,
-          data: randomValues(),
-          // data: [],
-          borderColor: 'rgba(56, 102, 242, 0.9)',
-          backgroundColor: 'rgba(56, 102, 242, 0.7)',
-          fill: isFilled,
-        }
+        label: nameChart,
+        data: dataToShow,
+        // data: [],
+        borderColor: 'rgba(56, 102, 242, 0.9)',
+        backgroundColor: 'rgba(56, 102, 242, 0.7)',
+        fill: isFilled,
+      }
         // ,{
         //   label: 'Dataset Prueba',
         //   data:  randomValues(),
@@ -155,8 +196,32 @@ function printChart() {
     }
   });
 
-  showTableData();
+  showTableData(dataToShow);
 }
+
+/** 
+ * javascript comment 
+ * @Author: Carlos Omar Anaya Barajas 
+ * @Date: 2022-09-19 12:09:03 
+ * @Desc: Function to obtain the minutes 
+ */
+
+function timeToShow() {
+
+  let minutes = [];
+
+  for (let i = 1; i <= 60; i++)
+    minutes.push(i);
+
+  return minutes;
+}
+
+/** 
+ * javascript comment 
+ * @Author: Carlos Omar Anaya Barajas 
+ * @Date: 2022-09-19 12:30:11 
+ * @Desc: call to function to show data on the graphic
+ */
 
 typeGraph("Consumo", "Voltaje", "Corriente");
 printChart();
