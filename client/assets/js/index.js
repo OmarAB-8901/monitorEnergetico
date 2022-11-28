@@ -1,9 +1,13 @@
-let urlApi = "http://localhost:1880";
+// let urlApi = "http://localhost:1880";
+let urlApi = "http://10.10.101.155:1880";
 let myChart;
-// let _today = moment().date() + "/" + ( moment().month() < 10 ? "0" + moment().month() : moment().month() ) + "/" + moment().year();
 let _today = moment().year() + "-" + ( moment().month() < 10 ? "0" + (moment().month()+1) : moment().month()+1 ) + "-" + moment().date();
+let _onlyMonth = moment().year() + "-" + ( moment().month() < 10 ? "0" + (moment().month()+1) : moment().month()+1 );
 
 document.getElementById('dateInitial').value = _today;
+document.getElementById('dateMonth').value = _onlyMonth;
+
+// document.querySelectorAll('.showDate').forEach((val, index) => { val.innerText = _today; });
 
 /** 
  * javascript comment 
@@ -17,7 +21,8 @@ let randomValues = () => {
   let random;
 
   for (let i = 1; i <= 60; i++) {
-    random = i + Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+    // random = i + Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+    random = i + Math.floor(Math.random() * (3 + 1)) + 1;
     values.push(random);
   }
 
@@ -30,62 +35,40 @@ let randomValues = () => {
  * @Date: 2022-09-19 11:22:18 
  * @Desc: Obtain info from the database 
  */
-
 let dataObtained = async () => {
-
-  let date = document.getElementById('dateInitial').value;
+  
   let typeGraph = document.getElementById('graphSelector').value;
 
-  let dataReceived = await fetch(urlApi + '/obtainDataChart?date='+date+"&typeGraph="+typeGraph).then(json => json.json()).then(data => data);
+  let dateI;
+  switch(typeGraph.toLowerCase()){
+
+      case 'dia':
+        dateI = document.getElementById('dateInitial').value;
+        break;
+      
+      case 'mes':
+        dateI = document.getElementById('dateMonth').value;
+        break;
+  }
+
+  let dataReceived = await fetch(urlApi + '/obtainDataChart?dateI='+dateI+'&typeGraph='+typeGraph).then(json => json.json()).then(data => data);
 
   let dataToReturn = dataReceived.map(data => {
-  
-    return { dateFormated: moment(data.DateAndTime).minute(), value: data.Val }
+
+    return { dateFormated: typeGraph.toLowerCase() == 'dia' ? moment(data.DateAndTime).get('hour') : moment(data.DateAndTime).get('date') , value: data.consumoKW }
   });
 
-  return timeToShow().map(minute => {
+  return timeToShow(typeGraph).map(timeLabel => {
 
     let temp = dataToReturn.filter(data => {
 
-      if (data.dateFormated == minute)
-        return data;
+      if (data.dateFormated == timeLabel)
+        return data.value;
     });
 
     return temp.length > 0 ? temp[0].value : 0;
   });
 }
-
-let showTableData = (dataToShow) => {
-
-  let totKwh = 0;
-  let rows = "";
-
-  // let time = 0;
-  // dataToShow = dataToShow.map( data => { return { timeLabel: time++, value: data } }).filter( data => data.value != 0 ? data : 0 );
-
-  // for (let i = 1; i <= dataToShow.length; i++) {
-  //   rows += "<tr><td>" + dataToShow[i - 1].timeLabel + "</td><td>" + dataToShow[i - 1].value + "</td></tr>";
-  //   totKwh += dataToShow[i - 1].value;
-  // }
-
-  for (let i = 1; i <= dataToShow.length; i++) {
-    rows += "<tr><td>" + i + "</td><td>" + dataToShow[i - 1] + "</td></tr>";
-    totKwh += dataToShow[i - 1];
-  }
-
-  document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
-  document.getElementsByClassName('kwh_Value')[0].innerHTML = totKwh.toFixed(2);
-
-  // let tableCreated = document.querySelector('#tablaDesglose').DataTable();
-  // $('#tablaDesglose').DataTable({
-  //   dom: 'Blfrtip',
-  //   // "paging": true,
-  //   "pageLength": 10,
-  //   "searching": false,
-  //   'ordering': false,
-  // });
-}
-// END
 
 function typeGraph(...graphs) {
 
@@ -94,78 +77,82 @@ function typeGraph(...graphs) {
     let slctGraph = document.getElementById('graphSelector');
     var option = document.createElement("option");
     option.value = graphs[j];
-    option.text = "Grafica de " + graphs[j];
+    option.text = "Grafica por " + graphs[j];
     slctGraph.add(option);
   }
 }
 
-let getSeconds = () => {
-
-  let secondLabels = [];
-
-  for (let i = 1; i <= 60; i++)
-    secondLabels.push(i);
-
-  return secondLabels;
-};
-
-let compareDates = () => {
-
-  let dateInitial = document.getElementById('dataInitial').value;
-  dateInitial = moment(dateInitial);
-
-  let dateEnding = document.getElementById('dateEnding').value;
-  dateEnding = moment(dateEnding);
-
-  let diffdates = dateEnding.diff(dateInitial);
-
-  return diffdates < 0 ? false : true;
-};
-
-let showErrorDates = () => {
-
-  let errorDates = document.getElementsByClassName('errorDates')[0];
-  errorDates.classList.toggle('show');
-
-  setTimeout(() => {
-    errorDates.classList.toggle('show');
-  }, 7000);
-}
-
 document.getElementById('btnBuscar').addEventListener('click', function () {
-
-  if (!compareDates()) {
-
-    showErrorDates();
-    return;
-  }
 
   myChart.destroy();
   printChart();
 });
 
+document.getElementById('graphSelector').addEventListener('change', function () {
+
+  document.querySelectorAll('.datesGraph').forEach( (val, index) => { val.classList.toggle('hide') } );
+});
+
+let setDataPrinter = () => {
+
+  document.querySelectorAll('.headerPrint div p.valuePrint').forEach((val, i) => {
+
+    let value;
+    let sel;
+    switch(val.id){
+
+      case 'tipoReporte':
+        sel = document.querySelector('#graphSelector');
+        value = sel.options[sel.selectedIndex].text;
+        break;
+  
+      case 'fecha':
+        sel = document.querySelector('#graphSelector');
+        
+        if(sel.value.toLowerCase() == 'dia')
+          value = document.getElementById('dateInitial').value;
+        else
+          value = document.getElementById('dateMonth').value;
+        break;
+      
+      case 'consumo':
+        sel = document.querySelector('.totalsCard .cardBody');
+        value = sel.querySelector('.kwh_Value').innerText + " " + sel.querySelector('.label_wh').innerText;
+        break;
+    }
+  
+    document.getElementById(val.id).innerText = value;
+  });
+}
+
 async function printChart() {
 
   let dataToShow = await dataObtained();
+  let typeGraph = document.getElementById('graphSelector').value;
+
+  let typeLabel = typeGraph.toLowerCase() == 'dia' ? 'Hora' : 'Día' 
 
   let typeChart = 'line';
-  let nameChart = 'KWh / minuto';
-  let smooth = true;
+  let nameChart = 'KWh / ' + typeLabel;
+  let smooth = false;
   let isFilled = false;
   const ctx = document.getElementById('energyChart').getContext('2d');
 
   myChart = new Chart(ctx, {
     type: typeChart,
     data: {
-      labels: timeToShow(),
+      labels: timeToShow(typeGraph),
       datasets: [{
-        label: nameChart,
-        data: dataToShow,
-        // data: [],
-        borderColor: 'rgba(56, 102, 242, 0.9)',
-        backgroundColor: 'rgba(56, 102, 242, 0.7)',
-        fill: isFilled,
-      }
+          label: nameChart,
+          data: dataToShow,
+          borderColor: 'rgba(56, 102, 242, 0.9)',
+          backgroundColor: 'rgba(56, 102, 242, 0.7)',
+          fill: isFilled,
+          // stepped: 'after',
+          // pointStyle: 'circle',
+          pointRadius: 6,
+          pointHoverRadius: 8
+        }
         // ,{
         //   label: 'Dataset Prueba',
         //   data:  randomValues(),
@@ -183,21 +170,54 @@ async function printChart() {
       ]
     },
     options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      },
+      // scales: {
+      //   y: {
+      //     beginAtZero: true
+      //   }
+      // },
       elements: {
         line: {
-          tension: smooth ? 0.4 : 0
+          tension: smooth ? 0.2 : 0
         }
       }
     }
   });
 
-  showTableData(dataToShow);
+  showTableData(dataToShow, typeGraph, typeLabel);
+  setDataPrinter();
 }
+
+let showTableData = (dataToShow, typeGraph, typeLabel) => {
+
+  let totKwh = 0;
+  let rows = "";
+
+  switch(typeGraph.toLowerCase()){
+
+    case 'dia':
+      for (let i = 0; i < dataToShow.length; i++) {
+        rows += "<tr><td>" + i + ":00</td><td>" + dataToShow[i].toLocaleString('en-US') + "</td></tr>";
+        totKwh += dataToShow[i];
+      }
+      document.getElementsByClassName('label_wh')[0].innerText = "KWh"
+      break;
+
+    case 'mes':
+      for (let i = 1; i <= dataToShow.length; i++) {
+        rows += "<tr><td>" + i + "</td><td>" + dataToShow[i - 1].toLocaleString('en-US') + "</td></tr>";
+        totKwh += dataToShow[i - 1];
+      }
+      totKwh = totKwh / 1000;
+      document.getElementsByClassName('label_wh')[0].innerText = "MWh"
+      break;
+  }
+
+  document.querySelectorAll('#tablaDesglose thead tr th')[0].innerText = typeLabel;
+
+  document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
+  document.getElementsByClassName('kwh_Value')[0].innerHTML = totKwh.toLocaleString('en-US');
+}
+// END
 
 /** 
  * javascript comment 
@@ -206,14 +226,48 @@ async function printChart() {
  * @Desc: Function to obtain the minutes 
  */
 
-function timeToShow() {
+function timeToShow(typeGraph='dia') {
 
-  let minutes = [];
+  let labels;
 
-  for (let i = 1; i <= 60; i++)
-    minutes.push(i);
+  switch (typeGraph.toLowerCase()) {
+    case 'dia':
+      labels = [];
+      for (let i = 0; i < 24; i++)
+      labels.push(i);
+      break;
+  
+      case 'mes':
+        labels =daysInMonth();
+        break;
+  }
+  return labels;
+}
 
-  return minutes;
+let daysInMonth = () => {
+
+  let di = document.getElementById('dateMonth').value + "-1";
+
+  let dateSelected = new Date(di);
+
+  var dt = new Date( dateSelected );
+
+  // dt.getMonth() will return a month between 0 - 11
+  // we add one to get to the last day of the month
+  // so that when getDate() is called it will return the last day of the month
+  var month = dt.getMonth() + 1;
+  var year = dt.getFullYear();
+
+  // this line does the magic (in collab with the lines above)
+  var daysInMonth = new Date(year, month, 0).getDate();
+
+  let daysArray = []
+  for (var i = 1; i <= daysInMonth; i++) {
+
+    daysArray.push(i);
+  }
+
+  return daysArray;
 }
 
 /** 
@@ -223,5 +277,5 @@ function timeToShow() {
  * @Desc: call to function to show data on the graphic
  */
 
-typeGraph("Consumo", "Voltaje", "Corriente");
+typeGraph("Mes", "Dia");
 printChart();

@@ -5,10 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor de monitoreo</title>
+  <title>Monitor</title>
 
   <link rel="stylesheet" href="./assets/css/index.css">
-  <!-- <link rel="stylesheet" href="./assets/css/datatables.min.css"> -->
 </head>
 
 <body>
@@ -19,41 +18,53 @@
 
   <div class="bodyMonitor">
 
-    <div class="rowBodyMonitor" style="text-align: center; /*gap: 0.5rem;*/ /*width: 78.5%;*/">
-      <!-- <div class="card">
-        <div class="cardHeader"><h4>Fecha</h4></div><hr>
-        <div class="cardBody"><p>22/08/2022</p></div>
-      </div> -->
+    <div class="headerPrint">
+      <div> <p> Tipo Reporte: </p> <p id="tipoReporte" class="valuePrint"></p> </div>
+      <div> <p> Fecha: </p> <p id="fecha" class="valuePrint"></p> </div>
+      <div> <p> Consumo: </p> <p id="consumo" class="valuePrint"></p> </div>
+    </div>
 
-      <!-- <div class="card">
-        <div class="cardHeader"><h4>Turno</h4></div><hr>
-        <div class="cardBody"><p>Matutino</p></div>
-      </div> -->
+    <div class="rowBodyMonitor">
 
-      <div class="card">
-        <div class="cardHeader"><h4>Fecha inicio</h4></div><hr>
-        <div class="cardBody"><p>22/08/2022</p></div>
+      <div class="card tipoReporte">
+        <div class="cardHeader"><h4>Tipo de reporte</h4></div>
+        <div class="cardBody">
+          <div class="formGroup">
+            <select type="text" name="" id="graphSelector" class="selectGraph"></select>
+            <label for="dateSelectot" class="">Selector de graficas</label>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="cardHeader"><h4>Fecha fin</h4></div><hr>
-        <div class="cardBody"><p>22/08/2022</p></div>
+      <div class="card fechasReporte">
+        <div class="cardHeader"><h4>Selector de fechas</h4></div>
+        <div class="cardBody">
+          <div class="formGroup" style="gap: 1rem;">
+            <input type="date" name="" id="dateInitial" placeholder=" " class="inputGraph datesGraph hide" min="2022-01-01T00:00" max="2030-12-31T23:59">
+            <input type="month" id="dateMonth" class="datesGraph" name="onlyMonth" min="2022-01" max="2032-12" value="2022-11">
+            <label for="dateSelectot" class="lblGraph">Seleccione fecha</label>
+
+            <div>
+              <span class="errorDates"> <small> Error: las fechas se encuentran invertidas </small> </span>
+            </div>
+
+            <!-- Actions Buttons -->
+            <div class="formGroup btnActions">
+              <button class="btnPrimary" id="btnBuscar"> Buscar </button>
+            </div>
+
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="cardHeader"><h4>Area</h4></div><hr>
-        <div class="cardBody"><p>B2M</p></div>
+      <div class="card totalsCard totConsumo">
+        <div class="cardHeader"><h4>Total de consumo</h4></div>
+        <div class="cardBody">
+          <p class="kwh_Value">0.00</p>
+          <p class="label_wh">KWh</p>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="cardHeader"><h4>Equipo</h4></div><hr>
-        <div class="cardBody"><p>NA</p></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Instrumentos</h4></div><hr>
-        <div class="cardBody"><p>NA</p></div>
-      </div>
     </div>
 
     <!-- Nuevo Diseño -->
@@ -61,192 +72,28 @@
 
       <div class="card_graph">
         <div class="cardHeader">
-          <h4>Este es el encabezado de la grafica</h4>
+          <h4>Grafica de consumo Energético</h4>
         </div>
-        <hr>
+        
         <div class="cardBody">
           <canvas id="energyChart"></canvas>
         </div>
       </div>
 
-      <div class="infoGroup">
-
-        <div class="card" id="toolBox">
-          <div class="cardHeader">
-            <h4>Caja de herramientas</h4>
-          </div>
-          <hr>
-          <div class="cardBody">
-
-            <div class="formGroup">
-              <select type="text" name="" id="graphSelector" class="selectGraph"></select>
-              <label for="dateSelectot" class="">Selector de graficas</label>
-            </div>
-
-            <div class="formGroup" style="gap: 1rem;">
-              <input type="date" name="" id="dateInitial" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <!-- <p style="margin: 1rem 0 0 0;">-</p>
-              <input type="date" name="" id="dateEnding" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59"> -->
-              <label for="dateSelectot" class="lblGraph">Seleccione rango de fechas</label>
-            </div>
-
-            <div>
-              <span class="errorDates"> <small> Error: las fechas se encuentran invertidas </small> </span>
-            </div>
-
-            <!-- <div class="formGroup">
-              <input type="date" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <label for="dateSelectot" class="lblGraph">Seleccione fecha</label>
-            </div> -->
-
-            <!-- <div class="formGroup">
-              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <input type="time" name="" id="dateSelector" placeholder=" " class="inputGraph" min="2000-01-01T00:00" max="2030-12-31T23:59">
-              <label for="dateSelectot" class="lblGraph">Seleccione hora</label>
-            </div> -->
-
-            <!-- <div class="formGroup">
-              <input type="text" name="" id="dateSelector" placeholder=" " class="inputGraph">
-              <label for="dateSelectot" class="lblGraph">Este es el label del input</label>
-            </div> -->
-
-            <!-- Actions Buttons -->
-            <div class="formGroup btnActions">
-              <button class="btnPrimary" id="btnBuscar"> Buscar </button>
-              <!-- <button class="btnSecondary" id="btnLimpiar"> Limpiar </button> -->
-            </div>
-
-          </div>
-        </div>
-
-        <div class="card totalsCard">
-          <div class="cardHeader">
-            <h4>Total de consumo</h4>
-          </div>
-          <hr>
-          <div class="cardBody">
-            <p class="kwh_Value">0.00</p>
-            <p class="kwh">KWh</p>
-          </div>
-        </div>
-
-        <!-- Aqui esta la tabla sugerida para mostrar información -->
-        <!-- <div class="card tblDesglose">
-          <div class="cardHeader">
-            <h4>Desglose</h4>
-          </div>
-          <hr>
-          <div class="cardBody">
-            <table id="tablaDesglose">
-              <thead>
-                <tr>
-                  <th>Hora</th>
-                  <th>KWh</th>
-                </tr>
-              </thead>
-              <tbody class="tblDesgloseBody">
-              </tbody>
-            </table>
-          </div>
-        </div> -->
-        <!-- END -->
-
-        <!--<div class="card">
-          <div class="cardHeader">
-            <h4>Este es el encabezado</h4>
-          </div>
-          <hr>
-          <div class="cardBody"></div>
-        </div>
-
-        <div class="card">
-          <div class="cardHeader">
-            <h4>Este es el encabezado</h4>
-          </div>
-          <hr>
-          <div class="cardBody"></div>
-        </div> -->
-
-        <!-- <div class="card">
-          <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-          <div class="cardBody"></div>
-        </div> -->
-      </div>
-
     </div>
     <!-- END -->
 
-    <!--<div class="rowBodyMonitor">
+    <table id="tablaDesglose">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>KWh</th>
+        </tr>
+      </thead>
+      <tbody class="tblDesgloseBody">
+      </tbody>
+    </table>
 
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-    </div>
-    <div class="rowBodyMonitor">
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-      <div class="card">
-        <div class="cardHeader"><h4>Este es el encabezado</h4></div><hr>
-        <div class="cardBody"></div>
-      </div>
-
-    </div> -->
-
-    <div class="rowBodyMonitor">
-
-      <div class="card tblDesglose">
-        <div class="cardHeader">
-          <h4>Desglose información</h4>
-        </div>
-        <hr>
-        <div class="cardBody">
-          <table id="tablaDesglose">
-            <thead>
-              <tr>
-                <th>Hora</th>
-                <th>KWh</th>
-              </tr>
-            </thead>
-            <tbody class="tblDesgloseBody">
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
   </div>
 
   <!-- <input type="color"> -->
