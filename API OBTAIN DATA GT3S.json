@@ -1,0 +1,185 @@
+[
+    {
+        "id": "ca131e811f8c3bb5",
+        "type": "tab",
+        "label": "GT3S API",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c6bb2567b71751d6",
+        "type": "comment",
+        "z": "ca131e811f8c3bb5",
+        "name": "Modulo para obtención de informacion para el modulo de GT3",
+        "info": "",
+        "x": 260,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "6a4e7ae17f8b04fb",
+        "type": "http in",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "url": "/obtainDataChart",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "9a9084920bb10da8",
+                "e9aae4427ed7fa1a"
+            ]
+        ]
+    },
+    {
+        "id": "9a9084920bb10da8",
+        "type": "function",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "func": "\nlet data = msg.payload;\n\n// data.dateI = data.dateI.replace(\"T\", \" \");\nlet typeQuery = data.typeGraph;\n\nlet dateFormat1 = \"\";\nlet dateFormat2 = \"\";\n\nswitch(typeQuery.toLowerCase()){\n    case 'dia':\n        dateFormat1 = \"yyyy-MM-dd HH\";\n        dateFormat2 = \"yyyy-MM-dd\";\n        break;\n    case 'mes':\n        dateFormat1 = \"yyyy-MM-dd\";\n        dateFormat2 = \"yyyy-MM\";\n        data.dateI = data.dateI.split(\"-\");\n        data.dateI = `${data.dateI[0]}-${data.dateI[1]}`;\n        break;\n}\n\nlet query = 'SELECT';\nquery += ` FORMAT(DateAndTime, '${dateFormat1}') AS DateAndTime`;\nquery += ' , (MAX(VAL) - MIN(VAL)) AS consumoKW';\nquery += ' FROM FloatTable';\nquery += ` WHERE FORMAT(DateAndTime, '${dateFormat2}') = '${data.dateI}'`;\nquery += ` AND TagIndex = 0`;\nquery += ` GROUP BY FORMAT(DateAndTime, '${dateFormat1}')`;\nquery += ' ORDER BY DateAndTime;';\n\nmsg.payload = query;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 140,
+        "wires": [
+            [
+                "47b3c0e78300ff00",
+                "fc2b2fe4afc5f58f"
+            ]
+        ]
+    },
+    {
+        "id": "47b3c0e78300ff00",
+        "type": "MSSQL",
+        "z": "ca131e811f8c3bb5",
+        "mssqlCN": "7f8318c6973951a5",
+        "name": "GT3s_Project",
+        "outField": "payload",
+        "returnType": 0,
+        "throwErrors": 1,
+        "query": "",
+        "modeOpt": "queryMode",
+        "modeOptType": "query",
+        "queryOpt": "payload",
+        "queryOptType": "editor",
+        "paramsOpt": "queryParams",
+        "paramsOptType": "none",
+        "rows": "rows",
+        "rowsType": "msg",
+        "params": [],
+        "x": 520,
+        "y": 140,
+        "wires": [
+            [
+                "7787aa64c6b12f12",
+                "f182acf4bd106c39"
+            ]
+        ]
+    },
+    {
+        "id": "ebe6d347e6f2895a",
+        "type": "http response",
+        "z": "ca131e811f8c3bb5",
+        "name": "Response Data",
+        "statusCode": "200",
+        "headers": {},
+        "x": 860,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "7787aa64c6b12f12",
+        "type": "json",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 690,
+        "y": 140,
+        "wires": [
+            [
+                "ebe6d347e6f2895a"
+            ]
+        ]
+    },
+    {
+        "id": "fc2b2fe4afc5f58f",
+        "type": "debug",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 455,
+        "y": 180,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "e9aae4427ed7fa1a",
+        "type": "debug",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 305,
+        "y": 180,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "f182acf4bd106c39",
+        "type": "debug",
+        "z": "ca131e811f8c3bb5",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 655,
+        "y": 180,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "7f8318c6973951a5",
+        "type": "MSSQL-CN",
+        "tdsVersion": "7_4",
+        "name": "GT3_project",
+        "server": "DESKTOP-Q6MP3KV",
+        "port": "1433",
+        "encyption": true,
+        "trustServerCertificate": true,
+        "database": "gt3s_test",
+        "useUTC": true,
+        "connectTimeout": "15000",
+        "requestTimeout": "15000",
+        "cancelTimeout": "5000",
+        "pool": "5",
+        "parseJSON": false,
+        "enableArithAbort": true
+    }
+]

@@ -1,8 +1,8 @@
-// let urlApi = "http://localhost:1880";
-let urlApi = "http://10.10.101.155:1880";
+let urlApi = "http://127.0.0.1:1880";
+// let urlApi = "http://10.10.101.155:1880";
 let myChart;
-let _today = moment().year() + "-" + ( moment().month() < 10 ? "0" + (moment().month()+1) : moment().month()+1 ) + "-" + moment().date();
-let _onlyMonth = moment().year() + "-" + ( moment().month() < 10 ? "0" + (moment().month()+1) : moment().month()+1 );
+let _today = moment().year() + "-" + (moment().month() < 10 ? "0" + (moment().month() + 1) : moment().month() + 1) + "-" + moment().date();
+let _onlyMonth = moment().year() + "-" + (moment().month() < 10 ? "0" + (moment().month() + 1) : moment().month() + 1);
 
 document.getElementById('dateInitial').value = _today;
 document.getElementById('dateMonth').value = _onlyMonth;
@@ -12,53 +12,33 @@ document.getElementById('dateMonth').value = _onlyMonth;
 /** 
  * javascript comment 
  * @Author: Carlos Omar Anaya Barajas 
- * @Date: 2022-09-14 10:21:52 
- * @Desc: This functions disapear beacuse are only for tha makeup 
- */
-let randomValues = () => {
-
-  let values = [];
-  let random;
-
-  for (let i = 1; i <= 60; i++) {
-    // random = i + Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-    random = i + Math.floor(Math.random() * (3 + 1)) + 1;
-    values.push(random);
-  }
-
-  return values;
-}
-
-/** 
- * javascript comment 
- * @Author: Carlos Omar Anaya Barajas 
  * @Date: 2022-09-19 11:22:18 
  * @Desc: Obtain info from the database 
  */
 let dataObtained = async () => {
-  
+
   let typeGraph = document.getElementById('graphSelector').value;
 
   let dateI;
-  switch(typeGraph.toLowerCase()){
+  switch (typeGraph.toLowerCase()) {
 
-      case 'dia':
-        dateI = document.getElementById('dateInitial').value;
-        break;
-      
-      case 'mes':
-        dateI = document.getElementById('dateMonth').value;
-        break;
+    case 'dia':
+      dateI = document.getElementById('dateInitial').value;
+      break;
+
+    case 'mes':
+      dateI = document.getElementById('dateMonth').value;
+      break;
   }
 
-  let dataReceived = await fetch(urlApi + '/obtainDataChart?dateI='+dateI+'&typeGraph='+typeGraph).then(json => json.json()).then(data => data);
+  let dataReceived = await fetch(urlApi + '/obtainDataChart?dateI=' + dateI + '&typeGraph=' + typeGraph).then(json => json.json()).then(data => data);
 
   let dataToReturn = dataReceived.map(data => {
 
-    return { dateFormated: typeGraph.toLowerCase() == 'dia' ? moment(data.DateAndTime).get('hour') : moment(data.DateAndTime).get('date') , value: data.consumoKW }
+    return { dateFormated: typeGraph.toLowerCase() == 'dia' ? moment(data.DateAndTime).get('hour') : moment(data.DateAndTime).get('date'), value: data.consumoKW }
   });
 
-  return timeToShow(typeGraph).map(timeLabel => {
+  return timeToShow(typeGraph, true).map(timeLabel => {
 
     let temp = dataToReturn.filter(data => {
 
@@ -90,7 +70,7 @@ document.getElementById('btnBuscar').addEventListener('click', function () {
 
 document.getElementById('graphSelector').addEventListener('change', function () {
 
-  document.querySelectorAll('.datesGraph').forEach( (val, index) => { val.classList.toggle('hide') } );
+  document.querySelectorAll('.datesGraph').forEach((val) => { val.classList.toggle('hide') });
 });
 
 let setDataPrinter = () => {
@@ -99,28 +79,28 @@ let setDataPrinter = () => {
 
     let value;
     let sel;
-    switch(val.id){
+    switch (val.id) {
 
       case 'tipoReporte':
         sel = document.querySelector('#graphSelector');
         value = sel.options[sel.selectedIndex].text;
         break;
-  
+
       case 'fecha':
         sel = document.querySelector('#graphSelector');
-        
-        if(sel.value.toLowerCase() == 'dia')
+
+        if (sel.value.toLowerCase() == 'dia')
           value = document.getElementById('dateInitial').value;
         else
           value = document.getElementById('dateMonth').value;
         break;
-      
+
       case 'consumo':
         sel = document.querySelector('.totalsCard .cardBody');
         value = sel.querySelector('.kwh_Value').innerText + " " + sel.querySelector('.label_wh').innerText;
         break;
     }
-  
+
     document.getElementById(val.id).innerText = value;
   });
 }
@@ -130,54 +110,40 @@ async function printChart() {
   let dataToShow = await dataObtained();
   let typeGraph = document.getElementById('graphSelector').value;
 
-  let typeLabel = typeGraph.toLowerCase() == 'dia' ? 'Hora' : 'Día' 
+  let typeLabel = typeGraph.toLowerCase() == 'dia' ? 'Hora' : 'Día'
 
   let typeChart = 'line';
   let nameChart = 'KWh / ' + typeLabel;
-  let smooth = false;
+  let smooth = true;
   let isFilled = false;
+  let beginZero = false;
   const ctx = document.getElementById('energyChart').getContext('2d');
 
   myChart = new Chart(ctx, {
     type: typeChart,
     data: {
-      labels: timeToShow(typeGraph),
+      labels: timeToShow(typeGraph, false),
       datasets: [{
-          label: nameChart,
-          data: dataToShow,
-          borderColor: 'rgba(56, 102, 242, 0.9)',
-          backgroundColor: 'rgba(56, 102, 242, 0.7)',
-          fill: isFilled,
-          // stepped: 'after',
-          // pointStyle: 'circle',
-          pointRadius: 6,
-          pointHoverRadius: 8
-        }
-        // ,{
-        //   label: 'Dataset Prueba',
-        //   data:  randomValues(),
-        //    borderColor: 'rgba(254, 22, 28, 0.9)',
-        //   backgroundColor: 'rgba(254, 22, 28, 0.7)',
-        //   fill: isFilled,
-        // }
-        // ,{
-        //   label: 'Dataset Prueba',
-        //   data:  randomValues(),
-        //   borderColor: 'rgba(31, 52, 245, 0.8)',
-        //   backgroundColor: 'rgba(31, 52, 245, 0.6)',
-        //   fill: isFilled,
-        // }
+        label: nameChart,
+        data: dataToShow,
+        borderColor: 'rgba(56, 102, 242, 0.9)',
+        backgroundColor: 'rgba(56, 102, 242, 0.7)',
+        fill: isFilled,
+        pointRadius: 9,
+        pointHoverRadius: 18
+      }
       ]
     },
     options: {
-      // scales: {
-      //   y: {
-      //     beginAtZero: true
-      //   }
-      // },
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: beginZero
+        }
+      },
       elements: {
         line: {
-          tension: smooth ? 0.2 : 0
+          tension: smooth ? 0.4 : 0
         }
       }
     }
@@ -191,12 +157,13 @@ let showTableData = (dataToShow, typeGraph, typeLabel) => {
 
   let totKwh = 0;
   let rows = "";
+  let lang = 'es-MX';
 
-  switch(typeGraph.toLowerCase()){
+  switch (typeGraph.toLowerCase()) {
 
     case 'dia':
       for (let i = 0; i < dataToShow.length; i++) {
-        rows += "<tr><td>" + i + ":00</td><td>" + dataToShow[i].toLocaleString('en-US') + "</td></tr>";
+        rows += `<tr><td> ${i}:00 - ${i}:59</td><td>${dataToShow[i].toLocaleString(lang)}</td></tr>`;
         totKwh += dataToShow[i];
       }
       document.getElementsByClassName('label_wh')[0].innerText = "KWh"
@@ -204,7 +171,8 @@ let showTableData = (dataToShow, typeGraph, typeLabel) => {
 
     case 'mes':
       for (let i = 1; i <= dataToShow.length; i++) {
-        rows += "<tr><td>" + i + "</td><td>" + dataToShow[i - 1].toLocaleString('en-US') + "</td></tr>";
+        // rows += "<tr><td>" + i + "</td><td>" + dataToShow[i - 1].toLocaleString(lang) + "</td></tr>";
+        rows += `<tr><td> ${i} </td><td>${dataToShow[i - 1].toLocaleString(lang)}</td></tr>`
         totKwh += dataToShow[i - 1];
       }
       totKwh = totKwh / 1000;
@@ -215,7 +183,7 @@ let showTableData = (dataToShow, typeGraph, typeLabel) => {
   document.querySelectorAll('#tablaDesglose thead tr th')[0].innerText = typeLabel;
 
   document.getElementsByClassName('tblDesgloseBody')[0].innerHTML = rows;
-  document.getElementsByClassName('kwh_Value')[0].innerHTML = totKwh.toLocaleString('en-US');
+  document.getElementsByClassName('kwh_Value')[0].innerHTML = totKwh.toLocaleString(lang);
 }
 // END
 
@@ -226,20 +194,19 @@ let showTableData = (dataToShow, typeGraph, typeLabel) => {
  * @Desc: Function to obtain the minutes 
  */
 
-function timeToShow(typeGraph='dia') {
+function timeToShow(typeGraph = 'dia', obtainingData) {
 
   let labels;
-
   switch (typeGraph.toLowerCase()) {
     case 'dia':
       labels = [];
       for (let i = 0; i < 24; i++)
-      labels.push(i);
+        !obtainingData ? labels.push(`${i}:00-${ /* i==23 ? 0 : i+1 */ i }:59`) : labels.push(i); 
       break;
-  
-      case 'mes':
-        labels =daysInMonth();
-        break;
+
+    case 'mes':
+      labels = daysInMonth();
+      break;
   }
   return labels;
 }
@@ -250,7 +217,7 @@ let daysInMonth = () => {
 
   let dateSelected = new Date(di);
 
-  var dt = new Date( dateSelected );
+  var dt = new Date(dateSelected);
 
   // dt.getMonth() will return a month between 0 - 11
   // we add one to get to the last day of the month
